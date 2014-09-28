@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">  
+    <bean id="serverPasswordCallback" class="com.kaustuv.poc.ws.security.ServerPasswordCallback">
+        <property name="signatureInfo" ref="signatureInfo" />
+    </bean>
+    <bean id="signatureInfo" class="com.kaustuv.poc.ws.security.SignatureInfoBean">
+        <property name="signatureServiceKey" value="myservicekey" />
+        <property name="signatureServiceKeyPassword" value="skpass" />
+    </bean>
+</beans>

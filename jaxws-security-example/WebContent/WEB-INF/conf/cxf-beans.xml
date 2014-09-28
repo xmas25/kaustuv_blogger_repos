@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    <bean id="greeting" class="com.kaustuv.poc.ws.service.greetings.GreetingsImpl" />
+    <jaxws:endpoint xmlns:tns="http://poc.kaustuv.com/ws/service/greetings" id="greetings"
+        implementor="#greeting" wsdlLocation="WEB-INF/wsdl/Sample.wsdl" endpointName="tns:GreetingsPort"
+        serviceName="tns:GreetingsService" address="/Greetings">
+        <jaxws:features>
+            <bean class="org.apache.cxf.feature.LoggingFeature" />
+        </jaxws:features>
+        <!-- usernameToken -->
+        <!--
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="true" />
+            <entry key="ws-security.callback-handler">
+                <ref bean="serverPasswordCallback" />
+            </entry>
+        </jaxws:properties>
+        -->
+         <!-- Sign Encryption -->
+         <!--  -->
+        <jaxws:properties>
+            <entry key="ws-security.signature.properties" value="file:D:/workspace/jaxws-security-example/WebContent/WEB-INF/keys/serviceKeystore.properties"/>
+            <entry key="ws-security.signature.username" value="myservicekey"/>
+            <entry key="ws-security.encryption.username" value="useReqSigCert"/>
+            <entry key="ws-security.callback-handler">
+                <ref bean="serverPasswordCallback" />
+            </entry>
+        </jaxws:properties>
+
+    </jaxws:endpoint>
+</beans>
