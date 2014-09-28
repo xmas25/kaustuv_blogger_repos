@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<context:component-scan base-package="com.kaustuv.jaxrs.example" />
+	<!-- cxf exception generator -->
+	<beans:bean id="exceptionProvider" class="com.kaustuv.jaxrs.example.security.SecurityExceptionMapper" />
+	<!-- Authentication manager configuration -->
+	<authentication-manager alias="security">
+		<authentication-provider>
+			<user-service>
+				<user name="kaustuv" password="kaustuv" authorities="ROLE_ADMIN" />
+				<user name="get" password="get" authorities="ROLE_GET" />
+				<user name="post" password="post" authorities="ROLE_POST" />
+				<user name="put" password="put" authorities="ROLE_PUT" />
+				<user name="delete" password="delete" authorities="ROLE_DELETE" />
+			</user-service>
+		</authentication-provider>
+	</authentication-manager>
+	<!-- HTTP basic authentication in Spring Security [option 1] -->
+	<!--
+		 <http>
+			<intercept-url pattern="/customerService/*" access="ROLE_ADMIN" />
+			<http-basic />
+		 </http>
+	 -->
+	<!-- HTTP basic authentication in Spring Security with http intercept url pattern [Option 2] -->
+	<http create-session="stateless" use-expressions="true">
+		<intercept-url pattern="/customerService/getCustomerById/**" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/customerService/addCustomer/**" access="hasRole('ROLE_POST')" />
+		<intercept-url pattern="/customerService/updateCustomer/**" access="hasRole('ROLE_PUT')" />
+		<intercept-url pattern="/customerService/deleteCustomer/**" access="hasAnyRole('ROLE_ADMIN','ROLE_DELETE')" />
+		<http-basic />
+	</http>
+
+</beans:beans>

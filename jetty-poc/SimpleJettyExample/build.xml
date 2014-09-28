@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SimpleJettyExample" basedir=".">
+	<property environment="env" />
+	<property name="JAVA_HOME" location="${env.JAVA_HOME}" />
+	<property name="JBOSS_HOME" location="${env.JBOSS_HOME}" />
+	<property name="JBOSS_SERVICE_DIR" location="${env.JBOSS_HOME}/server/default" />
+	<property name="CXF_HOME" location="${env.CXF_HOME}" />
+	<property name="src" location="./src" />
+	<property name="build" location="./build" />
+	<property name="classes" location="./build/classes" />
+	<property name="web" location="./WebContent" />
+	<!-- JBoss start / stop -->
+	<path id="class.path">
+		<fileset dir="${JBOSS_HOME}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${JBOSS_HOME}/lib/endorsed">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${JBOSS_HOME}/client">
+			<include name="**/*.jar" />
+			<exclude name="**/jaxws-rt.jar" />
+			<exclude name="**/jaxws-tools.jar" />
+		</fileset>
+		<fileset dir="${CXF_HOME}/lib">
+			<include name="**/*.jar" />
+			<exclude name="**/xmlbeans-2.5.0.jar" />
+			<exclude name="**/xml-resolver-1.2.jar" />
+			<exclude name="**/xmlsec-1.4.6.jar" />
+			<exclude name="**/xmltooling-1.3.2-1.jar" />
+			<exclude name="**/xsdlib-2010.1.jar" />
+		</fileset>
+	</path>
+	<target name="startJBossServer">
+		<java classname="org.jboss.Main" fork="true" dir="${JBOSS_HOME}/server/default">
+			<arg line=" -c default " />
+			<classpath>
+				<pathelement path="${JBOSS_HOME}/bin/run.jar" />
+				<pathelement path="${JAVA_HOME}/lib/tools.jar" />
+			</classpath>
+		</java>
+	</target>
+	<target name="stopJBossServer">
+		<java jvm="${JAVA_HOME}/bin/java" classname="org.jboss.Shutdown" fork="true" failonerror="false" resultproperty="shutdown.rc">
+			<arg line="-s jnp://localhost:1099" />
+			<classpath>
+				<pathelement path="${JBOSS_HOME}/bin/shutdown.jar" />
+				<pathelement path="${JBOSS_HOME}/client/jbossall-client.jar" />
+			</classpath>
+		</java>
+	</target>
+	<target name="clean">
+		<delete dir="${classes}" />
+		<mkdir dir="${classes}" />
+	</target>
+	<target name="compile" depends="clean">
+		<javac srcdir="${src}" destdir="${classes}" debug="on">
+			<classpath refid="class.path" />
+		</javac>
+	</target>
+	<target name="packaging" depends="compile">
+		<war destfile="${build}/SimpleJettyExample.war" webxml="${web}/WEB-INF/web.xml">
+			<webinf dir="${web}/WEB-INF/">
+				<include name="beans.xml" />
+				<include name="wsdl/*.wsdl" />
+			</webinf>
+			<lib dir="${CXF_HOME}/lib">
+				<include name="**/*.jar" />
+				<exclude name="**/xmlbeans-2.5.0.jar" />
+				<exclude name="**/geronimo-servlet_2.5_spec-1.1.2*" />
+				<exclude name="**/slf4j*" />
+			</lib>
+			<classes dir="${classes}" />
+		</war>
+	</target>
+	<target name="deploy" depends="packaging">
+		<copy file="${build}/SimpleJettyExample" todir="${env.JBOSS_HOME}/server/default/deploy" overwrite="true" />
+	</target>
+	<target name="undeploy">
+		<delete file="${env.JBOSS_HOME}/server/default/deploy/SimpleJettyExample.war" />
+	</target>
+</project>

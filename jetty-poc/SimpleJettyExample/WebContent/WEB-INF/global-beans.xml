@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://cxf.apache.org/core"
+    xmlns:sec="http://cxf.apache.org/configuration/security" xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:http="http://cxf.apache.org/transports/http/configuration"
+    xmlns:httpj="http://cxf.apache.org/transports/http-jetty/configuration" xmlns:wsa="http://cxf.apache.org/ws/addressing"
+    xmlns:wsrm-policy="http://schemas.xmlsoap.org/ws/2005/02/rm/policy" xmlns:wsrm-mgr="http://cxf.apache.org/ws/rm/manager"
+    xsi:schemaLocation="
+                        http://cxf.apache.org/core 
+                        http://cxf.apache.org/schemas/core.xsd
+                        http://cxf.apache.org/configuration/security 
+                        http://cxf.apache.org/schemas/configuration/security.xsd
+                        http://www.springframework.org/schema/beans 
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://cxf.apache.org/transports/http/configuration 
+                        http://cxf.apache.org/schemas/configuration/http-conf.xsd
+                        http://cxf.apache.org/transports/http-jetty/configuration 
+                        http://cxf.apache.org/schemas/configuration/http-jetty.xsd
+                        http://schemas.xmlsoap.org/ws/2005/02/rm/policy 
+                        http://schemas.xmlsoap.org/ws/2005/02/rm/wsrm-policy.xsd
+                        http://cxf.apache.org/ws/rm/manager 
+                        http://cxf.apache.org/schemas/configuration/wsrm-manager.xsd
+                        http://cxf.apache.org/jaxws 
+                        http://cxf.apache.org/schemas/jaxws.xsd">
+    <!-- import resource -->
+    <import resource="classpath:META-INF/cxf/cxf*.xml" />
+    <bean id="biosocket" class="org.eclipse.jetty.server.bio.SocketConnector">
+        <property name="host" value="localhost" />
+        <property name="port" value="9001" />
+    </bean>
+    <bean id="defaultHandler" class="org.eclipse.jetty.server.handler.DefaultHandler" />
+    <!-- Cxf Bus implementation -->
+    <cxf:bus>
+        <!-- Cxf features implementation global -->
+        <cxf:features>
+            <!-- cxf logging implementation -->
+            <cxf:logging />
+        </cxf:features>
+    </cxf:bus>
+    <!-- Jetty server configuration and implementation -->
+    <httpj:engine-factory bus="cxf">
+        <!-- jetty server port we can add host too -->
+        <httpj:engine host="localhost" port="9001">
+            <!-- jetty thread pooling -->
+            <httpj:threadingParameters minThreads="5" maxThreads="15" />
+            <httpj:connector>
+                <ref bean="biosocket" />
+            </httpj:connector>
+            <httpj:handlers>
+                <ref bean="defaultHandler" />
+            </httpj:handlers>
+            <httpj:sessionSupport>true</httpj:sessionSupport>
+        </httpj:engine>
+    </httpj:engine-factory>
+</beans>
