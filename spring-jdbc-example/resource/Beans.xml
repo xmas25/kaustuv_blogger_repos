@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+#
+# Copyright © Kaustuv Maji , 2014
+# Repos - https://github.com/kaustuvmaji
+# Blog -  http://kaustuvmaji.blogspot.in
+#
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:repository="http://www.springframework.org/schema/data/repository"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/jdbc
+						http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+						http://www.springframework.org/schema/jee
+						http://www.springframework.org/schema/jee/spring-jee.xsd
+		 				http://www.springframework.org/schema/tx
+		 				http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+						http://www.springframework.org/schema/data/repository
+						http://www.springframework.org/schema/data/repository/spring-repository.xsd">
+
+	<!--
+		Scans the classpath for annotated components that will be auto-registered as
+		Spring beans. By default, the Spring-provided @Component, @Repository,
+		@Service, and @Controller stereotypes will be detected.
+		Here in base-package section I mentioned spring.jdbc.template.example
+	-->
+	<context:component-scan base-package="spring.jdbc.template.example" />
+
+	<!--
+		Indicates whether the implicit annotation post-processors should be enabled.
+		Default is "true".
+	 -->
+	<context:annotation-config/>
+
+	<!--
+		This bean is used to load properties files.
+ 	-->
+	<bean id="propLoader"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>
+					file:#{ systemEnvironment['config.dir'] }/db.properties
+				</value>
+			</list>
+		</property>
+	</bean>
+
+	<!--
+		This bean is used to connect mySql database.
+ 	-->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		p:driverClassName="${jdbc.driverClassName}" p:url="${jdbc.url}"
+		p:username="${jdbc.username}" p:password="${jdbc.password}" />
+
+	<!-- Database script execution maybe we can use it for embed schema -->
+	<!--
+	<jdbc:initialize-database data-source="dataSource">
+		<jdbc:script location="classpath:test-data_1.sql" />
+	</jdbc:initialize-database>
+	-->
+
+	<!-- this beans is going to manage transaction -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager" />
+
+	<!--
+		 It simplifies the use of JDBC and helps to avoid common errors.
+		 It executes core JDBC workflow, leaving application code to
+		 provide SQL and extract results. This class executes SQL queries or updates,
+		 initiating iteration over ResultSets and catching JDBC exceptions and
+		 translating them to the generic, more informative exception hierarchy
+		 defined in the org.springframework.dao package.
+	-->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"
+		p:dataSource-ref="dataSource" />
+
+	<bean id="memberMapper" class="spring.jdbc.template.example.MemberMapper" />
+
+	<bean id="memberJDBCTemplate" class="spring.jdbc.template.example.MemberDAOImpl" />
+
+	<bean id="memberJDBCImpl" class="spring.jdbc.template.example.MemberStoredProcedureDAOImpl" p:dataSource-ref="dataSource" />
+
+</beans>

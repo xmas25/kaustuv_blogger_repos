@@ -1,0 +1,1 @@
+Sadly SimpleJDBCTemplate is deprecated from spring jdbc 4.0.1. only JDBC template is the option.
