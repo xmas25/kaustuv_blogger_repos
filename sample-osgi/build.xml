@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="sample-osgi" default="deploy" basedir=".">
+	<!-- Import machine-specificsettings -->
+	<property file="build.properties" />
+	<!-- Setup build paths -->
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="build.lib" value="${basedir}/lib" />
+	<property name="line.separator" value="," />
+	<property name="build.resource" value="${basedir}/resources" />
+	<property name="build.classes.dir" value="${build.dir}/classes" />
+	<property name="build.bundles.dir" value="${build.dir}/bundles" />
+	<property name="build.test.dir" value="${build.dir}/tests" />
+
+	<!-- Load the bnd custom task -->
+	<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="${bnd.path}" />
+
+	<!-- Set aclasspath for the OSGi libraries -->
+	<path id="osgilibs">
+		<fileset dir="${osgi.path}" includes="*osgi*.jar" excludes="*resource*"/>
+		<fileset file="${bnd.path}" />
+	</path>
+
+	<!-- TARGET : clean ; cleans all build o u t p u t s -->
+	<target name="clean" description="Clean all build outputs">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<!-- TARGET : compile; compiles Java sources -->
+	<target name="compile" depends="clean" description="Compile Java sources">
+		<pathconvert pathsep="${line.separator}" refid="osgilibs" property="build.classpath.list" />
+		<echo message="*****ClassPath Entries*****" />
+		<echo message="${build.classpath.list}" />
+		<mkdir dir="${build.classes.dir}" />
+		<javac optimize="on" includeantruntime="on" includejavaruntime="on" srcdir="src" destdir="${build.classes.dir}" debug="true" classpathref="osgilibs" />
+		<mkdir dir="${build.test.dir}" />
+	</target>
+
+	<!-- TARGET : bundle ; g e n e r a t e s bundle JARs using bnd -->
+	<target name="bundle" depends="compile" description="Build bundles">
+		<mkdir dir="${build.bundles.dir}" />
+		<!-- Convertan ANT file sett a flat list of files -->
+		<pathconvert property="bnd.files" pathsep=",">
+			<fileset dir="${build.resource}">
+				<include name="*.bnd" />
+			</fileset>
+		</pathconvert>
+		<bnd classpath="${build.classes.dir}" failok="false" output="${build.bundles.dir}" exceptions="true" files="${bnd.files}" trace="true" />
+	</target>
+
+	<!-- TARGET : deploy ; clean felix-cache and start felix server -->
+	<target name="deploy" depends="bundle" description="Build bundles">
+		<delete dir="${felix.home}/felix-cache" />
+		<copy todir="${felix.home}/bundle" overwrite="true">
+			<fileset dir="${build.bundles.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<tstamp>
+			<format property="current.time" pattern="MM-dd-yyyy hh:mm:ss aa Z" />
+		</tstamp>
+		<echo message="build finished at ${current.time}" />
+	</target>
+</project>

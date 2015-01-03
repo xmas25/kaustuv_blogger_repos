@@ -1,0 +1,8 @@
+Bundle-Version: 0.0.0
+Bundle-Copyright: © kaustuv maji
+Bundle-DocURL: http://kaustuvmaji.blogspot.in
+Bundle-Vendor: Knowledge
+Service-Component: *
+Import-Package: *
+Export-Package: service.consumer
+Bundle-Activator: service.consumer.ConsumerActivator

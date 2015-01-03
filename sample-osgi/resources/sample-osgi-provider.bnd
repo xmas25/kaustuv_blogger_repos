@@ -1,0 +1,12 @@
+Bundle-Version: 0.0.0
+Bundle-Copyright: © kaustuv maji
+Bundle-Vendor: Knowledge
+Bundle-DocURL: http://kaustuvmaji.blogspot.in
+Import-Package: org.osgi.*,\
+	org.osgi.framework.*,\
+	org.osgi.service.*,\
+	org.osgi.util.*,\
+	*
+Export-Package: service.provider
+Service-Component: *
+Bundle-Activator: service.provider.ProducerActivator
