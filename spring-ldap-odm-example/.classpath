@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resource"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="spring-data-commons-1.9.1.RELEASE.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/aop-appliance"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Spring-Framework-4.x"/>
+	<classpathentry kind="lib" path="spring-ldap-core-2.0.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="spring-ldap-odm-2.0.2.RELEASE.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/slf4j"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

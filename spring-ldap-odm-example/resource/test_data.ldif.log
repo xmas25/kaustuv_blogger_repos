@@ -1,0 +1,70 @@
+version: 1
+
+#!RESULT OK
+#!CONNECTION ldap://localhost:10389
+#!DATE 2015-04-27T23:45:47.374
+dn: dc=example,dc=com
+objectclass: top
+objectclass: domain
+dc: example
+
+#!RESULT OK
+#!CONNECTION ldap://localhost:10389
+#!DATE 2015-04-27T23:45:48.064
+dn: ou=groups,dc=example,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: groups
+description: this will contains all the groups
+
+#!RESULT OK
+#!CONNECTION ldap://localhost:10389
+#!DATE 2015-04-27T23:45:48.984
+dn: uid=kaustuv,ou=users,dc=example,dc=com
+objectClass: organizationalPerson
+objectClass: person
+objectClass: uidObject
+objectClass: top
+cn: kaustuv
+sn: maji
+uid: kaustuv
+postalAddress: GC 207, Sector III, SaltlakeCity, Kolkata 700106, WestBengal,
+  India
+telephoneNumber: 9831198311
+userPassword:: e1NTSEF9OXg3VGxzamNrQkFWZmVRRllRYnBXS25IUFYvV0hpdmtiSFNNMXc9P
+ Q==
+
+#!RESULT OK
+#!CONNECTION ldap://localhost:10389
+#!DATE 2015-04-27T23:45:49.674
+dn: cn=testGroup,ou=groups,dc=example,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: testGroup
+uniqueMember: uid=kaustuv,ou=users,dc=example,dc=com
+o: kaustuv's blog
+
+#!RESULT OK
+#!CONNECTION ldap://localhost:10389
+#!DATE 2015-04-27T23:45:50.574
+dn: ou=users,dc=example,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: users
+
+#!RESULT OK
+#!CONNECTION ldap://localhost:10389
+#!DATE 2015-04-27T23:45:52.064
+dn: uid=guest,ou=users,dc=example,dc=com
+objectClass: top
+objectClass: uidObject
+objectClass: person
+objectClass: organizationalPerson
+cn: guest
+sn: guest
+uid: guest
+postalAddress: DreamLand
+telephoneNumber: 9830098300
+userPassword:: e1NTSEF9OXg3VGxzamNrQkFWZmVRRllRYnBXS25IUFYvV0hpdmtiSFNNMXc9P
+ Q==
+

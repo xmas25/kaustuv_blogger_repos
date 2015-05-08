@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+#
+# Copyright © Kaustuv Maji , 2014
+# Repos - https://github.com/kaustuvmaji
+# Blog -  http://kaustuvmaji.blogspot.in
+#
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:ldap="http://www.springframework.org/schema/ldap"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/ldap http://www.springframework.org/schema/ldap/spring-ldap-2.0.xsd">
+
+	<context:component-scan base-package="ldap.odm.example" />
+
+	<bean id="simpleDirContextAuthenticationStrategy"
+		class="org.springframework.ldap.core.support.SimpleDirContextAuthenticationStrategy" />
+
+	<bean id="userReposImpl" class="ldap.odm.example.UserRepositoryImpl" />
+
+	<bean id="fromStringConverter"
+		class="org.springframework.ldap.odm.typeconversion.impl.converters.FromStringConverter" />
+	<bean id="toStringConverter"
+		class="org.springframework.ldap.odm.typeconversion.impl.converters.ToStringConverter" />
+	<bean id="converterManager"
+		class="org.springframework.ldap.odm.typeconversion.impl.ConverterManagerFactoryBean">
+		<property name="converterConfig">
+			<set>
+				<bean
+					class="org.springframework.ldap.odm.typeconversion.impl.ConverterManagerFactoryBean$ConverterConfig">
+					<property name="fromClasses">
+						<set>
+							<value>java.lang.String</value>
+						</set>
+					</property>
+					<property name="toClasses">
+						<set>
+							<value>java.lang.Byte</value>
+							<value>java.lang.Short</value>
+							<value>java.lang.Integer</value>
+							<value>java.lang.Long</value>
+							<value>java.lang.Float</value>
+							<value>java.lang.Double</value>
+							<value>java.lang.Boolean</value>
+						</set>
+					</property>
+					<property name="converter" ref="fromStringConverter" />
+				</bean>
+				<bean
+					class="org.springframework.ldap.odm.typeconversion.impl.ConverterManagerFactoryBean$ConverterConfig">
+					<property name="fromClasses">
+						<set>
+							<value>java.lang.Byte</value>
+							<value>java.lang.Short</value>
+							<value>java.lang.Integer</value>
+							<value>java.lang.Long</value>
+							<value>java.lang.Float</value>
+							<value>java.lang.Double</value>
+							<value>java.lang.Boolean</value>
+						</set>
+					</property>
+					<property name="toClasses">
+						<set>
+							<value>java.lang.String</value>
+						</set>
+					</property>
+					<property name="converter" ref="toStringConverter" />
+				</bean>
+			</set>
+		</property>
+	</bean>
+
+	<ldap:context-source url="ldap://localhost:10389"
+		base="dc=example,dc=com" username="uid=admin,ou=system" password="secret"
+		authentication-strategy-ref="simpleDirContextAuthenticationStrategy"
+		native-pooling="true" />
+
+
+	<bean id="odmManager"
+		class="org.springframework.ldap.odm.core.impl.OdmManagerImplFactoryBean">
+		<property name="converterManager" ref="converterManager" />
+		<property name="contextSource" ref="contextSource" />
+		<property name="managedClasses">
+			<set>
+				<value>ldap.odm.example.User</value>
+			</set>
+		</property>
+	</bean>
+
+
+	<ldap:ldap-template id="ldapTemplate" />
+</beans>
